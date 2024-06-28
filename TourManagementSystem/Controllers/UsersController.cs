@@ -100,7 +100,6 @@ namespace TourManagementSystem.Controllers
 
             return Ok(User);
         }
-
         private bool UserExists(int id)
         {
             return (_context.Users?.Any(e => e.Id == id)).GetValueOrDefault();

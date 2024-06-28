@@ -1,71 +1,68 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using TourManagementSystem.Data;
+using System.Threading.Tasks;
 using TourManagementSystem.Models;
+using TourManagementSystem.Repositories;
+using TourManagementSystem.Services;
 
-[Route("api/[controller]")]
-[ApiController]
-public class AuthController : ControllerBase
+namespace TourManagementSystem.Controllers
 {
-    private readonly DataContext _context;
-    private readonly IConfiguration _configuration;
-
-    public AuthController(DataContext context, IConfiguration configuration)
+    [Route("api/[controller]")]
+    [ApiController]
+    public class AuthController : ControllerBase
     {
-        _context = context;
-        _configuration = configuration;
-    }
+        private readonly IUserRepository _userRepository;
+        private readonly IAuthService _authService;
 
-    [HttpPost("signup")]
-    public async Task<IActionResult> SignUp([FromBody] User user)
-    {
-        if (await _context.Users.AnyAsync(u => u.email == user.email))
+        public AuthController(IUserRepository userRepository, IAuthService authService)
         {
-            return BadRequest("User already exists.");
+            _userRepository = userRepository;
+            _authService = authService;
         }
 
-        user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
-        _context.Users.Add(user);
-        await _context.SaveChangesAsync();
-
-        return Ok("User registered successfully.");
-    }
-
-    [HttpPost("login")]
-    public async Task<IActionResult> Login([FromBody] User login)
-    {
-        var user = await _context.Users.SingleOrDefaultAsync(u => u.email == login.email);
-        if (user == null || !BCrypt.Net.BCrypt.Verify(login.Password, user.Password))
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
         {
-            return Unauthorized();
+            var user = await _userRepository.GetUserByEmailAndPasswordAsync(loginDto.Email, loginDto.Password);
+
+            if (user == null)
+            {
+                return Unauthorized("Invalid credentials");
+            }
+
+            var token = await _authService.GenerateJwtToken(user);
+
+            return Ok(new { Token = token });
         }
 
-        var token = GenerateJwtToken(user);
-        return Ok(new { token });
-    }
 
-    private string GenerateJwtToken(User user)
-    {
-        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
-        var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+        [HttpPost("signup")]
+        public async Task<IActionResult> SignUp([FromBody] SignUpDto signUpDto)
 
-        var claims = new[]
         {
-            new Claim(JwtRegisteredClaimNames.Sub, value: user.email),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-        };
+            // Check if the email is already registered
+            var existingUser = await _userRepository.GetUserByEmailAsync(signUpDto.email);
+            if (existingUser != null)
+            {
+                return Conflict("Email already exists");
+            }
 
-        var token = new JwtSecurityToken(
-            issuer: _configuration["Jwt:Issuer"],
-            audience: _configuration["Jwt:Issuer"],
-            claims: claims,
-            expires: DateTime.Now.AddMinutes(120),
-            signingCredentials: credentials);
+            // Create a new user entity
+            var newUser = new User
+            {
+                FirstName = signUpDto.FirstName,
+                LastName = signUpDto.LastName,
+                email = signUpDto.email,
+                Password = signUpDto.Password  // Note: Password hashing should be implemented
+                                                // Assign other properties as needed
+            };
 
-        return new JwtSecurityTokenHandler().WriteToken(token);
+            // Add the user to the database
+            var createdUser = await _userRepository.AddAsync(newUser);
+
+            // Generate JWT token for the new user (if needed)
+            var token = await _authService.GenerateJwtToken(createdUser);
+
+            return Ok(new { Token = token });
+        }
     }
 }

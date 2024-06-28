@@ -2,8 +2,7 @@
   "ExpandedNodes": [
     "",
     "\\TourManagementSystem",
-    "\\TourManagementSystem\\Controllers"
+    "\\TourManagementSystem\\Migrations"
   ],
-  "SelectedNode": "\\TourManagementSystem\\Controllers\\ServicesController.cs",
   "PreviewInSolutionExplorer": false
 }

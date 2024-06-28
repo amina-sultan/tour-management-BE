@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\asultan\\Desktop\\TourManagementSystem\\TourManagementSystem\\TourManagementSystem.csproj": {}
+    "C:\\Users\\asultan\\Desktop\\tour-management-BE\\TourManagementSystem\\TourManagementSystem.csproj": {}
   },
   "projects": {
-    "C:\\Users\\asultan\\Desktop\\TourManagementSystem\\TourManagementSystem\\TourManagementSystem.csproj": {
+    "C:\\Users\\asultan\\Desktop\\tour-management-BE\\TourManagementSystem\\TourManagementSystem.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\asultan\\Desktop\\TourManagementSystem\\TourManagementSystem\\TourManagementSystem.csproj",
+        "projectUniqueName": "C:\\Users\\asultan\\Desktop\\tour-management-BE\\TourManagementSystem\\TourManagementSystem.csproj",
         "projectName": "TourManagementSystem",
-        "projectPath": "C:\\Users\\asultan\\Desktop\\TourManagementSystem\\TourManagementSystem\\TourManagementSystem.csproj",
+        "projectPath": "C:\\Users\\asultan\\Desktop\\tour-management-BE\\TourManagementSystem\\TourManagementSystem.csproj",
         "packagesPath": "C:\\Users\\asultan\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\asultan\\Desktop\\TourManagementSystem\\TourManagementSystem\\obj\\",
+        "outputPath": "C:\\Users\\asultan\\Desktop\\tour-management-BE\\TourManagementSystem\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\asultan\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -44,10 +44,6 @@
             "BCrypt.Net-Next": {
               "target": "Package",
               "version": "[4.0.3, )"
-            },
-            "Microsoft.AspNet.WebApi.Core": {
-              "target": "Package",
-              "version": "[5.3.0, )"
             },
             "Microsoft.AspNet.WebApi.Cors": {
               "target": "Package",
