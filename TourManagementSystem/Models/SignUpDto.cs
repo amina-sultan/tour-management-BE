@@ -19,5 +19,11 @@ namespace TourManagementSystem.Models
 
         public string? UserType { get; set; }
 
+        public string? gender { get; set; }
+
+        public string? Address { get; set; }
+
+        public string? PhonenUmber { get; set; } = string.Empty;
+
     }
 }
