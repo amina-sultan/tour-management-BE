@@ -21,8 +21,8 @@ namespace TourManagementSystem.Models
 
         public string? UserType { get; set; } = string.Empty;
 
-        public int DestinationId { get; set; }
-        public Destination? Destination { get; set; }
+        //public int? DestinationId { get; set; }
+        //public Destination? Destination { get; set; }
 
     }
 }
