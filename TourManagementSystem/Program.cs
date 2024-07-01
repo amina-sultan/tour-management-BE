@@ -69,6 +69,7 @@ internal class Program
 
         builder.Services.AddScoped<IUserRepository, UserRepository>();
         builder.Services.AddScoped<IAuthService, AuthService>();
+        builder.Services.AddScoped<BlogRepository>();
 
         builder.Services.AddSwaggerGen();
 
