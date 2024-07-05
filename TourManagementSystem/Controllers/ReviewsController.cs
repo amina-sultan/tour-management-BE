@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TourManagementSystem.Data;
 using TourManagementSystem.Models;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace TourManagementSystem.Controllers
 {
@@ -17,51 +19,134 @@ namespace TourManagementSystem.Controllers
             _context = context;
         }
 
-        // GET: api/User
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Review>>> GetReviews()
+        public async Task<ActionResult<IEnumerable<ReviewDto>>> GetReviews()
         {
-            if (_context.Reviews == null)
-            {
-                return NotFound();
-            }
-            return await _context.Reviews.ToListAsync();
-        }
+            var reviews = await _context.Reviews
+                .Include(r => r.User)
+                .Select(r => new ReviewDto
+                {
+                    Id = r.Id,
+                    Feedback = r.Feedback,
+                    UserId = r.UserId,
+                    ImageUrl = r.ImageUrl,
+                    User = new UserDto
+                    {
+                        Id = r.User.Id,
+                        FirstName = r.User.FirstName,
+                        LastName = r.User.LastName,
+                        email = r.User.email,
+                        gender = r.User.gender,
+                        Address = r.User.Address,
+                        PhonenUmber = r.User.PhonenUmber,
+                        UserType = r.User.UserType
+                    }
+                })
+                .ToListAsync();
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Review>> GetReview(int id)
-        {
-            if (_context.Reviews == null)
-            {
-                return NotFound();
-            }
-            var Review = await _context.Reviews!.FindAsync(id);
-
-            if (Review == null)
-            {
-                return NotFound("Person not found");
-            }
-            return Ok(Review);
+            return Ok(reviews);
         }
 
         [HttpPost]
-        public async Task<ActionResult<Review>> AddReview(Review review)
+        public async Task<ActionResult<Review>> PostReview([FromBody] CreateReviewDto createReviewDto)
         {
-            _context.Reviews!.Add(review);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var user = await _context.Users.FindAsync(createReviewDto.UserId);
+            if (user == null)
+            {
+                return BadRequest("User not found");
+            }
+
+            var review = new Review
+            {
+                Feedback = createReviewDto.Feedback,
+                UserId = createReviewDto.UserId,
+                ImageUrl = createReviewDto.ImageUrl
+            };
+
+            _context.Reviews.Add(review);
             await _context.SaveChangesAsync();
 
-            return Ok(await GetReviews());
+            return CreatedAtAction(nameof(GetReviews), new { id = review.Id }, review);
+        }
+
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteReview(int id)
+        {
+            var review = await _context.Reviews.FindAsync(id);
+            if (review == null)
+            {
+                return NotFound("Review not found");
+            }
+
+            _context.Reviews.Remove(review);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<ReviewDto>> GetReview(int id)
+        {
+            var review = await _context.Reviews
+                .Include(r => r.User)
+                .Select(r => new ReviewDto
+                {
+                    Id = r.Id,
+                    Feedback = r.Feedback,
+                    UserId = r.UserId,
+                    ImageUrl = r.ImageUrl,
+                    User = new UserDto
+                    {
+                        Id = r.User.Id,
+                        FirstName = r.User.FirstName,
+                        LastName = r.User.LastName,
+                        email = r.User.email,
+                        gender = r.User.gender,
+                        Address = r.User.Address,
+                        PhonenUmber = r.User.PhonenUmber,
+                        UserType = r.User.UserType
+                    }
+                })
+                .FirstOrDefaultAsync(r => r.Id == id); // Match by Review Id
+
+            if (review == null)
+            {
+                return NotFound();
+            }
+
+            return review;
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutReview(int id, Review review)
+        public async Task<IActionResult> UpdateReview(int id, ReviewDto reviewDto)
         {
-            if (id != review.Id)
+            if (id != reviewDto.Id) // Ensure the ID matches the Review ID
             {
                 return BadRequest();
             }
 
-            _context.Entry(review).State = EntityState.Modified;
+            var review = await _context.Reviews.FindAsync(id);
+            if (review == null)
+            {
+                return NotFound();
+            }
+
+            review.Feedback = reviewDto.Feedback;
+            review.ImageUrl = reviewDto.ImageUrl;
+
+            var user = await _context.Users.FindAsync(reviewDto.UserId);
+            if (user == null)
+            {
+                return BadRequest("User not found");
+            }
+
+            review.User = user;
 
             try
             {
@@ -69,7 +154,7 @@ namespace TourManagementSystem.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!ReviewExists(id))
+                if (!_context.Reviews.Any(e => e.Id == id))
                 {
                     return NotFound();
                 }
@@ -79,31 +164,7 @@ namespace TourManagementSystem.Controllers
                 }
             }
 
-            return Ok(review);
-        }
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteReview(int id)
-        {
-
-            if (_context.Reviews == null)
-            {
-                return NotFound();
-            }
-            var Review = await _context.Reviews!.FindAsync(id);
-            if (Review == null)
-            {
-                return NotFound();
-            }
-            _context.Reviews.Remove(Review);
-            await _context.SaveChangesAsync();
-
-            return Ok(Review);
-        }
-
-        private bool ReviewExists(int id)
-        {
-            return (_context.Reviews?.Any(e => e.Id == id)).GetValueOrDefault();
+            return NoContent();
         }
     }
 }
