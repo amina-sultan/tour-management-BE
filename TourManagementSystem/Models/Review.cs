@@ -13,5 +13,6 @@ namespace TourManagementSystem.Models
 
         public int UserId { get; set; }
         public User? User { get; set; }
+        public string ImageUrl { get; set; } = string.Empty;
     }
 }
