@@ -30,7 +30,19 @@ namespace TourManagementSystem.Controllers
 
             var token = await _authService.GenerateJwtToken(user);
 
-            return Ok(new { Token = token });
+            var response = new
+            {
+                Token = token,
+                User = new
+                {
+                    user.Id,
+                    user.FirstName,
+                    user.email,
+                    user.UserType
+                }
+            };
+
+            return Ok(response);
         }
 
 

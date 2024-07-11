@@ -21,10 +21,12 @@ namespace TourManagementSystem.Services
         {
             var claims = new[]
             {
-        new Claim(JwtRegisteredClaimNames.Sub, user.email ?? string.Empty),
-        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-        new Claim(ClaimTypes.Name, user.FirstName)
-    };
+               new Claim(JwtRegisteredClaimNames.Sub, user.email ?? string.Empty),
+               new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+               new Claim(JwtRegisteredClaimNames.Jti, user.Id.ToString()),
+               new Claim(ClaimTypes.Name, user.FirstName),
+               new Claim(ClaimTypes.Role, user.UserType)
+            };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

@@ -1,6 +1,10 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Data;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using TourManagementSystem.Data;
 using TourManagementSystem.Models;
 
@@ -18,6 +22,7 @@ namespace TourManagementSystem.Controllers
         }
 
         // GET: api/User
+        [Authorize]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
@@ -26,6 +31,15 @@ namespace TourManagementSystem.Controllers
                 return NotFound();
             }
             return await _context.Users.ToListAsync();
+        }
+
+
+        [HttpGet("Admin")]
+        [Authorize(Roles = "admin")]
+        public IActionResult AdminsEndpoint()
+        {
+            var currentUser = GetUserInfo();
+            return Ok($"Hi {currentUser.FirstName} i am {currentUser.UserType}");
         }
 
         [HttpGet("{id}")]
@@ -44,7 +58,7 @@ namespace TourManagementSystem.Controllers
             return Ok(User);
         }
 
-        [HttpPost]
+        [ HttpPost]
         public async Task<ActionResult<User>> AddUser(User user)
         {
             _context.Users!.Add(user);
@@ -103,6 +117,27 @@ namespace TourManagementSystem.Controllers
         private bool UserExists(int id)
         {
             return (_context.Users?.Any(e => e.Id == id)).GetValueOrDefault();
+        }
+
+        private User GetUserInfo()
+        {
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+
+            if (identity != null)
+            {
+                var userClaims = identity.Claims;
+                int userId = 0;
+                int.TryParse(userClaims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Jti)?.Value, out userId);
+
+                return new User
+                {
+                    email = userClaims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sub)?.Value,
+                    Id = userId,
+                    FirstName = userClaims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value,
+                    UserType = userClaims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value
+                };
+            }
+            return null;
         }
     }
 }
