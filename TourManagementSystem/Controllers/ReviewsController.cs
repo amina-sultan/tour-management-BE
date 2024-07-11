@@ -2,9 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using TourManagementSystem.Data;
 using TourManagementSystem.Models;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+
 
 namespace TourManagementSystem.Controllers
 {

@@ -69,6 +69,7 @@ internal class Program
 
         builder.Services.AddScoped<IUserRepository, UserRepository>();
         builder.Services.AddScoped<IAuthService, AuthService>();
+        builder.Services.AddScoped<BookingService>();
         builder.Services.AddScoped<BlogRepository>();
 
         builder.Services.AddSwaggerGen();
@@ -86,9 +87,21 @@ internal class Program
         }
 
         app.UseAuthorization();
-        app.UseRouting();
+
+        builder.Services.AddAuthentication();
+
+        app.UseAuthentication();
         app.UseCors("AllowReactApp");
         app.MapControllers();
+        app.UseRouting();
+
+        app.UseAuthentication();
+        app.UseAuthorization();
+
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapControllers();
+        });
 
         app.Run();
     }

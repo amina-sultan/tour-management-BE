@@ -18,5 +18,16 @@ namespace TourManagementSystem.Data
         public DbSet<Blog> Blogs { get; set; } = null!;
 
         public DbSet<Service> Services { get; set; } = null!;
+
+        public DbSet<Booking> Bookings { get; set; } = null!;
+        public DbSet<BookingDetailsDTO> BookingDetailsDTO { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<BookingDetailsDTO>().Ignore(b => b.Service);
+            modelBuilder.Entity<BookingDetailsDTO>().Ignore(b => b.User);
+        }
     }
 }
