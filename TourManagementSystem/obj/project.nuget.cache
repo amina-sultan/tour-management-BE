@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "SM//X7wUTYd6qJpoaogoo2WlAnkLHj4KosfKXaKIKET3YaQ3hGBUqERUHBUeTWjP0oQyqWL/AcuGy+VEKnBZjg==",
+  "dgSpecHash": "c2hj8PWc8bxpVBDvBk2Me622b2fnwkOI4+02cYbO0++W3U24wFX9dshSQgPZRc9XuF/kq7G7e05Oq7Jae81b6Q==",
   "success": true,
-  "projectFilePath": "C:\\Users\\asultan\\Desktop\\tour-management-BE\\TourManagementSystem\\TourManagementSystem.csproj",
+  "projectFilePath": "C:\\Users\\asultan\\Desktop\\tour-management-BE-final\\tour-management-BE\\TourManagementSystem\\TourManagementSystem.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\asultan\\.nuget\\packages\\bcrypt.net-next\\4.0.3\\bcrypt.net-next.4.0.3.nupkg.sha512",
     "C:\\Users\\asultan\\.nuget\\packages\\humanizer.core\\2.8.26\\humanizer.core.2.8.26.nupkg.sha512",

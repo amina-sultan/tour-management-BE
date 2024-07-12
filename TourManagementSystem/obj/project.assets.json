@@ -2282,11 +2282,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\asultan\\Desktop\\tour-management-BE\\TourManagementSystem\\TourManagementSystem.csproj",
+      "projectUniqueName": "C:\\Users\\asultan\\Desktop\\tour-management-BE-final\\tour-management-BE\\TourManagementSystem\\TourManagementSystem.csproj",
       "projectName": "TourManagementSystem",
-      "projectPath": "C:\\Users\\asultan\\Desktop\\tour-management-BE\\TourManagementSystem\\TourManagementSystem.csproj",
+      "projectPath": "C:\\Users\\asultan\\Desktop\\tour-management-BE-final\\tour-management-BE\\TourManagementSystem\\TourManagementSystem.csproj",
       "packagesPath": "C:\\Users\\asultan\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\asultan\\Desktop\\tour-management-BE\\TourManagementSystem\\obj\\",
+      "outputPath": "C:\\Users\\asultan\\Desktop\\tour-management-BE-final\\tour-management-BE\\TourManagementSystem\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\asultan\\AppData\\Roaming\\NuGet\\NuGet.Config",

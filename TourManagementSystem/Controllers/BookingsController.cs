@@ -93,27 +93,39 @@ namespace TourManagementSystem.Controllers
         [HttpGet("mybookings")]
         public async Task<IActionResult> GetUserBookings([FromQuery] int userId)
         {
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null)
+            {
+                return NotFound("User not found.");
+            }
+
+            bool isAdmin = user.UserType == "admin";
+
             var query = @"
-        SELECT 
-            b.Id, 
-            b.ServiceId, 
-            b.TotalCost, 
-            b.BookingDate, 
-            b.TourDate, 
-            b.PaymentMethod, 
-            b.Status, 
-            u.FirstName AS UserName, 
-            d.DestinationName AS DestinationName
-        FROM 
-            Bookings b
-        JOIN 
-            Users u ON b.UserId = u.Id
-        JOIN 
-            Services s ON b.ServiceId = s.Id
-        JOIN 
-            Destinations d ON s.DestinationId = d.Id
-        WHERE 
-            b.UserId = {0}";
+                SELECT 
+                    b.Id, 
+                    b.ServiceId, 
+                    b.TotalCost, 
+                    b.BookingDate, 
+                    b.TourDate, 
+                    b.PaymentMethod, 
+                    b.Status, 
+                    u.FirstName AS UserName, 
+                    d.DestinationName AS DestinationName
+                FROM 
+                    Bookings b
+                JOIN 
+                    Users u ON b.UserId = u.Id
+                JOIN 
+                    Services s ON b.ServiceId = s.Id
+                JOIN 
+                    Destinations d ON s.DestinationId = d.Id
+                ";
+
+            if (!isAdmin)
+            {
+                query += "WHERE b.UserId = {0}";
+            }
 
             var bookingDetails = await _context.BookingDetailsDTO
                 .FromSqlRaw(query, userId)
