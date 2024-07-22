@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Security.Cryptography.X509Certificates;
 
 namespace TourManagementSystem.Models
 {
@@ -18,7 +19,6 @@ namespace TourManagementSystem.Models
         [Required]
         [DataType(DataType.Date)]
         public DateTime TourDate { get; set; }
-        public int UserId { get; set; }
 
         [Required]
         public string PaymentMethod { get; set; } = "Cash";
@@ -29,7 +29,12 @@ namespace TourManagementSystem.Models
         [ForeignKey("ServiceId")]
         public Service? Service { get; set; }
 
-        [ForeignKey("UserId")]
-        public User User { get; set; }
+        [Required]
+        public string? userName { get; set; }
+        [Required]
+        public string? contact { get; set; }
+
+        [Required]
+        public string? CNIC { get; set; }
     }
 }

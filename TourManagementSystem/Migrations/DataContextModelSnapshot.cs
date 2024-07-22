@@ -45,6 +45,10 @@ namespace TourManagementSystem.Migrations
                     b.Property<DateTime>("BookingDate")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("CNIC")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("PaymentMethod")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -63,16 +67,65 @@ namespace TourManagementSystem.Migrations
                     b.Property<DateTime>("TourDate")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("contact")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("userName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ServiceId");
 
-                    b.HasIndex("UserId");
-
                     b.ToTable("Bookings");
+                });
+
+            modelBuilder.Entity("TourManagementSystem.Models.BookingDetailsDTO", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("BookingDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CNIC")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("DestinationName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("PaymentMethod")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("ServiceId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("TotalCost")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("TourDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("contact")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("userName")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("BookingDetailsDTO");
                 });
 
             modelBuilder.Entity("TourManagementSystem.Models.Destination", b =>
@@ -92,6 +145,10 @@ namespace TourManagementSystem.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<decimal?>("HotelCosrPerDay")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -203,21 +260,13 @@ namespace TourManagementSystem.Migrations
 
             modelBuilder.Entity("TourManagementSystem.Models.Booking", b =>
                 {
-                    b.HasOne("TourManagementSystem.Models.Service", "service")
+                    b.HasOne("TourManagementSystem.Models.Service", "Service")
                         .WithMany()
                         .HasForeignKey("ServiceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("TourManagementSystem.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-
-                    b.Navigation("service");
+                    b.Navigation("Service");
                 });
 
             modelBuilder.Entity("TourManagementSystem.Models.Review", b =>
