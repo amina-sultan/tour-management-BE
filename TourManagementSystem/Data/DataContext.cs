@@ -27,7 +27,6 @@ namespace TourManagementSystem.Data
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<BookingDetailsDTO>().Ignore(b => b.Service);
-            modelBuilder.Entity<BookingDetailsDTO>().Ignore(b => b.User);
         }
     }
 }

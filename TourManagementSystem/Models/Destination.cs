@@ -12,6 +12,7 @@ namespace TourManagementSystem.Models
         public decimal? HotelCosrPerDay { get; set; }
         [Required]
         public decimal BaseCost { get; set; }
+        public string ImageUrl { get; set; } = string.Empty;
 
     }
 }

@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TourManagementSystem.Data;
 using TourManagementSystem.Models;
@@ -21,11 +20,16 @@ namespace TourManagementSystem.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Service>>> GetServices()
         {
-            if (_context.Users == null)
+            if (_context.Services == null)
             {
                 return NotFound();
             }
-            return await _context.Services.ToListAsync();
+
+            var services = await _context.Services
+                                          .Include(s => s.Destination)
+                                          .ToListAsync();
+
+            return Ok(services);
         }
 
         [HttpGet("{id}")]
@@ -35,13 +39,17 @@ namespace TourManagementSystem.Controllers
             {
                 return NotFound();
             }
-            var Service = await _context.Services!.FindAsync(id);
 
-            if (Service == null)
+            var service = await _context.Services
+                .Include(s => s.Destination)
+                .FirstOrDefaultAsync(s => s.Id == id);
+
+            if (service == null)
             {
-                return NotFound("Person not found");
+                return NotFound("Service not found");
             }
-            return Ok(Service);
+
+            return Ok(service);
         }
 
         [HttpPost]

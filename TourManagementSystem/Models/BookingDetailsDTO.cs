@@ -9,9 +9,10 @@
         public DateTime TourDate { get; set; }
         public string PaymentMethod { get; set; }
         public string Status { get; set; }
-        public string UserName { get; set; }
         public string DestinationName { get; set; }
         public object? Service { get; internal set; }
-        public object? User { get; internal set; }
+        public string? userName { get; set; }
+        public string contact { get; set; }
+        public string CNIC { get; set; }
     }
 }
