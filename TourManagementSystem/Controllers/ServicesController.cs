@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using TourManagementSystem.Data;
 using TourManagementSystem.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace TourManagementSystem.Controllers
 {
@@ -61,15 +62,37 @@ namespace TourManagementSystem.Controllers
             return Ok(await GetServices());
         }
 
+        [Authorize(Roles = "admin")]
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutService(int id, Service service)
+        public async Task<IActionResult> PutService(int id, [FromBody] ServiceDTO serviceDto)
         {
-            if (id != service.Id)
+            if (id != serviceDto.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(service).State = EntityState.Modified;
+            var currentService = await _context.Services.Include(s => s.Destination).FirstOrDefaultAsync(s => s.Id == id);
+            if (currentService == null)
+            {
+                return NotFound();
+            }
+
+            currentService.NumberOfPeople = serviceDto.NumberOfPeople;
+            currentService.NumberOfDays = serviceDto.NumberOfDays;
+            currentService.IsRequiredPersonalGuide = serviceDto.IsRequiredPersonalGuide;
+            currentService.NoOfRoom = serviceDto.NoOfRoom;
+            currentService.TourType = serviceDto.TourType;
+            currentService.Description = serviceDto.Description;
+            currentService.DestinationId = serviceDto.DestinationId;
+
+            if (serviceDto.Destination != null)
+            {
+                currentService.Destination.DestinationName = serviceDto.Destination.DestinationName;
+                currentService.Destination.Description = serviceDto.Destination.Description;
+                currentService.Destination.HotelCosrPerDay = serviceDto.Destination.HotelCosrPerDay;
+                currentService.Destination.BaseCost = serviceDto.Destination.BaseCost;
+                currentService.Destination.ImageUrl = serviceDto.Destination.ImageUrl;
+            }
 
             try
             {
@@ -87,7 +110,7 @@ namespace TourManagementSystem.Controllers
                 }
             }
 
-            return Ok(service);
+            return Ok(serviceDto);
         }
 
         [HttpDelete("{id}")]
@@ -112,6 +135,12 @@ namespace TourManagementSystem.Controllers
         private bool ServiceExists(int id)
         {
             return (_context.Services?.Any(e => e.Id == id)).GetValueOrDefault();
+        }
+
+        [HttpGet("unauthorized")]
+        public IActionResult UnauthorizedAction()
+        {
+            return StatusCode(403, new { message = "You are not authorized for this action." });
         }
     }
 }
