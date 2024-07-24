@@ -65,6 +65,33 @@ internal class Program
                 ValidAudience = builder.Configuration["Jwt:Audience"],
                 IssuerSigningKey = new SymmetricSecurityKey(jwtKey)
             };
+            options.Events = new JwtBearerEvents
+            {
+                OnChallenge = context =>
+                {
+                    context.HandleResponse();
+                    context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                    context.Response.ContentType = "application/json";
+                    return context.Response.WriteAsync(Newtonsoft.Json.JsonConvert.SerializeObject(new
+                    {
+                        error = "You are an unauthorized user."
+                    }));
+                },
+                OnForbidden = context =>
+                {
+                    context.Response.StatusCode = StatusCodes.Status403Forbidden;
+                    context.Response.ContentType = "application/json";
+                    return context.Response.WriteAsync(Newtonsoft.Json.JsonConvert.SerializeObject(new
+                    {
+                        error = "You do not have permission to access this resource."
+                    }));
+                }
+            };
+        });
+
+        builder.Services.AddAuthorization(options =>
+        {
+            options.AddPolicy("AdminPolicy", policy => policy.RequireRole("admin"));
         });
 
         builder.Services.AddScoped<IUserRepository, UserRepository>();
